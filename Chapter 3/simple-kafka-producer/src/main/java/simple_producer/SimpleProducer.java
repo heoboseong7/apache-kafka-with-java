@@ -1,4 +1,4 @@
-package com.example;
+package simple_producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -23,11 +23,16 @@ public class SimpleProducer {
         KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
 
         String messageValue = "testMessage";
+        // 메세지 키가 없는 레코드
         ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME, messageValue);
+        // 메세지 키가 포함된 레코드
+        ProducerRecord<String, String> recordWithKey = new ProducerRecord<>(TOPIC_NAME, "Pangyou", "23");
         // 효율적인 전송을 위해 즉각적인 전송이 아닌 프로듀서 내부에 가지고 있다가 배치 형태로 묶어서 전송 -> "배치 전송"
         // 배치 전송을 통해 타 메세지 플랫폼보다 빠른 전송 속도를 가진다.
         producer.send(record);
+        producer.send(recordWithKey);
         logger.info("{}", record);
+        logger.info("{}", recordWithKey);
         // 프로듀서 내부 버퍼에 가지고 있던 레코드 배치를 브로커로 전송
         producer.flush();
         producer.close();
